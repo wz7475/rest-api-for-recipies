@@ -9,7 +9,7 @@
     define('APPROOT', dirname(dirname(__FILE__)));
 
     //URLROOT (Dynamic links)
-    define('URLROOT', 'http://localhost/mvcblog2');
+    define('URLROOT', 'https://granny-crud.herokuapp.com/');
 
     //Sitename
     define('SITENAME', 'Login & Register script');
