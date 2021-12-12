@@ -1,4 +1,11 @@
-
-<?php foreach ($data['dish'] as $dish) : ?>
-    <?php echo $dish . "<br>"; ?>
-<?php endforeach; ?>
+<?php
+    $output = json_encode($data['dish']); 
+    if($output === false)
+    {
+        echo json_last_error_msg();
+    }
+    else
+    {
+        echo $output;
+    }
+?>
