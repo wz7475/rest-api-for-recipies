@@ -1,13 +1,6 @@
 <?php
    require APPROOT . '/views/includes/head.php';
 ?>
-<div id="section-landing">
-    <?php
-       require APPROOT . '/views/includes/navigation.php';
-    ?>
-
-    <div class="wrapper-landing">
-        <h1>One man's crappy software</h1>
-        <h2>is another man's full-time job.</h2>
-    </div>
-</div>
+<center>
+    <H1>Web based interface will be developed during 2. phase of gr9k project</H1>
+</center>
