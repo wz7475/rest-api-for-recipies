@@ -64,6 +64,17 @@ class Api
 
     public function getRecommendations($user_id, $amount)
     {
+        //get all recipies that are not disliked
+        $this->db->query('
+        SELECT * FROM dishes
+        WHERE id not in (
+            SELECT dish_id FROM dislikes 
+            WHERE user_id = :user_id
+            )
+        ');
+        $this->db->bind(':user_id', $user_id);
+        $available_dishes = $this->db->resultSet();
+
         //Get all disliked tags
         $this->db->query('
         SELECT tags_id FROM dishes
@@ -88,20 +99,46 @@ class Api
             }
         }
 
-        //rank them
+        //normalize
         $worst_tag_occurences = max($bucket);
-        var_dump($worst_tag_occurences);
+        $ranked_tags = [];
+        foreach(array_keys($bucket) as $tag) 
+        {
+            $ranked_tags[$tag] = -($bucket[$tag]/$worst_tag_occurences);
+        }
 
-        //get all recipies that are not disliked
-        $this->db->query('
-        SELECT * FROM dishes
-        WHERE id not in (
-            SELECT dish_id FROM dislikes 
-            WHERE user_id = :user_id
-            )
-        ');
-        $this->db->bind(':user_id', $user_id);
-        $available_dishes = $this->db->resultSet();
+        //calculate each dishes score
+        foreach($available_dishes as $dish)
+        {
+            $tags = explode(",", $dish->tags_id);
+            $score = 0;
+
+            $tag_score = 0;
+            foreach($tags as $tag)
+            {
+                $tag_score+=$ranked_tags[$tag];
+            }
+            $score += ($tag_score / count($tags));
+            
+            $dish["score"] = $score;
+        }
+
+    }
+
+    public function sortByScore($a, $b)
+    {
+        if($a["score"]>$b["score"])
+        {
+            return 1;
+        }
+        else if($a["score"]==$b["score"])
+        {
+            return 0;
+        }
+        else
+        {
+            return -1;
+        }
     }
 
     public function findTagByID($tag_id)

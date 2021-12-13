@@ -31,7 +31,7 @@ class Apis extends Controller
         $dishes = $this->apiModel->getRecommendations($amount, $user_id);
 
         $data = [
-            'dishes' => $dishes
+            'json' => $dishes
         ];
 
         $this->view('api/display_json', $data);
