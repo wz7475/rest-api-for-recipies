@@ -43,7 +43,15 @@ class Api
 
         $this->db->bind(':id', $id);
 
-        return  $this->db->single();
+        $result = $this->db->single();
+        if($result == false)
+        {
+            return "No recipie";
+        }
+        else
+        {
+            return $result->steps;
+        }
     }
 
     public function findDishByID($recipie_id) //returns a dish with all data in place
@@ -198,14 +206,12 @@ class Api
 
         //select n first
         $dishes_selected = array_slice($available_dishes, 0, min($amount, count($available_dishes)));
-        var_dump($dishes_selected);
 
         //fill with data
         $output = [];
         foreach ($dishes_selected as $dish) {
             array_push($output, $this->fillDishWithData($dish));
         }
-        var_dump($output);
         //ship
         return $output;
     }
@@ -224,11 +230,12 @@ class Api
         $tags = explode(",", $tag_id_string);
         $tag_names = [];
         foreach ($tags as $tag_id) {
-            $tag_name = $this->findTagByID($tag_id)->name;
-            if(!$tag_name)
+            $tag = $this->findTagByID($tag_id);
+            if($tag == false)
             {
-                continue;    
+                continue;
             }
+            $tag_name = $tag->name;
             array_push($tag_names, $tag_name);
         }
         return $tag_names;
@@ -241,7 +248,7 @@ class Api
         unset($dish->tags_id);
 
         //Adding recipie from recipie_id
-        $recipie = $this->findRecipieByID($dish->recipie_id)->steps;
+        $recipie = $this->findRecipieByID($dish->recipie_id);
         unset($dish->recipie_id);
         $dish->recipie = utf8_encode($recipie);
 
