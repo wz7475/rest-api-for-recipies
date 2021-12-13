@@ -8,7 +8,7 @@ class Api
         $this->db = new Database;
     }
 
-    public function findAlldishesRaw()
+    public function findAlldishesRaw()  //returns raw dish database 
     {
         $this->db->query('SELECT * FROM dishes');
 
@@ -17,7 +17,7 @@ class Api
         return $results;
     }
 
-    public function findAlldishes()
+    public function findAlldishes() //returns all dishes with their data in place
     {
         $results = $this->findAlldishesRaw();
         $output = [];
@@ -28,30 +28,27 @@ class Api
         return $output;
     }
 
-    public function findDishById($id)
+    public function findDishByIDRaw($id) //returns a raw dish from the database
     {
         $this->db->query('SELECT * FROM dishes WHERE id = :id');
 
         $this->db->bind(':id', $id);
 
-        $row = $this->db->single();
-
-        return $row;
+        return  $this->db->single();
     }
 
-    public function getRecipieByIDRaw($recipie_id)
+    public function findRecipieByID($id) //returns a recipie by its ID
     {
         $this->db->query('SELECT * FROM recipies WHERE id = :id');
 
-        $this->db->bind(':id', $recipie_id);
+        $this->db->bind(':id', $id);
 
         return  $this->db->single();
     }
 
-    public function getRecipieByID($recipie_id)
+    public function findDishByID($recipie_id) //returns a dish with all data in place
     {
-        $result = $this->getRecipieByIDRaw($recipie_id);
-
+        $result = $this->findDishByIDRaw($recipie_id);
         return  $this->fillDishWithData($result);
     }
 
@@ -115,8 +112,8 @@ class Api
         }
 
         //normalize
-        if(count($bucket_disliked)) $worst_tag_occurences = max($bucket_disliked);
-        if(count($bucket_used)) $best_tag_occurences = max($bucket_used);
+        if (count($bucket_disliked)) $worst_tag_occurences = max($bucket_disliked);
+        if (count($bucket_used)) $best_tag_occurences = max($bucket_used);
         $ranked_tags = [];
 
         foreach (array_keys($bucket_disliked) as $tag) {
@@ -142,15 +139,14 @@ class Api
         $used_dishes = $this->db->resultSet();
 
         $rank_by_usage = [];
-        foreach($used_dishes as $dish)
-        {
+        foreach ($used_dishes as $dish) {
             //PÓŹNIEJ BĘDZIE TO FUNKCJA OD CZASU
             $rank_by_usage[$dish->dish_id] = -1;
         }
         return $rank_by_usage;
     }
 
-    public function getRecommendations($amount, $user_id)
+    public function getRecommendations($amount, $user_id) //returns $amount of full dishes recommended to $user_id 
     {
         //get all recipies that are not disliked
         $this->db->query('
@@ -178,9 +174,8 @@ class Api
                 }
             }
             $score += ($tag_score / count($tags));
-            
-            if(isset($rank_by_usage[$dish->id]))
-            {
+
+            if (isset($rank_by_usage[$dish->id])) {
                 $score += $rank_by_usage[$dish->id];
             }
 
@@ -200,10 +195,22 @@ class Api
 
         //sort dishes by score
         usort($available_dishes, "sortByScore");
-        return array_slice($available_dishes, 0, min($amount, count($available_dishes)));
+
+        //select n first
+        $dishes_selected = array_slice($available_dishes, 0, min($amount, count($available_dishes)));
+        var_dump($dishes_selected);
+
+        //fill with data
+        $output = [];
+        foreach ($dishes_selected as $dish) {
+            array_push($output, $this->fillDishWithData($dish));
+        }
+        var_dump($output);
+        //ship
+        return $output;
     }
 
-    public function findTagByID($tag_id)
+    public function findTagByID($tag_id) //returns tag's name by its id
     {
         $this->db->query('SELECT name FROM tags WHERE id = :id');
 
@@ -212,25 +219,29 @@ class Api
         return  $this->db->single();
     }
 
-
-    public function getTags($tag_id_string)
+    public function getTags($tag_id_string) //converts tags_id into an array of tag names
     {
         $tags = explode(",", $tag_id_string);
         $tag_names = [];
         foreach ($tags as $tag_id) {
-            array_push($tag_names, $this->findTagByID($tag_id)->name);
+            $tag_name = $this->findTagByID($tag_id)->name;
+            if(!$tag_name)
+            {
+                continue;    
+            }
+            array_push($tag_names, $tag_name);
         }
         return $tag_names;
     }
 
-    public function fillDishWithData($dish)
+    public function fillDishWithData($dish) //puts recipie and tags into the recipie and returns it
     {
         //Adding tags from tag ids
         $dish->tags = $this->getTags($dish->tags_id);
         unset($dish->tags_id);
 
         //Adding recipie from recipie_id
-        $recipie = $this->getRecipieByID($dish->recipie_id)->steps;
+        $recipie = $this->findRecipieByID($dish->recipie_id)->steps;
         unset($dish->recipie_id);
         $dish->recipie = utf8_encode($recipie);
 

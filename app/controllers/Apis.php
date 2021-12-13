@@ -16,7 +16,7 @@ class Apis extends Controller
 
     public function getDish($id)
     {
-        $dish = $this->apiModel->findDishById($id);
+        $dish = $this->apiModel->findDishByID($id);
 
         $data = [
             'json' => $dish
