@@ -9,20 +9,31 @@ class Apis extends Controller
     {
         $dishes = $this->apiModel->findAlldishes();
         $data = [
-            'dishes' => $dishes
+            'json' => $dishes
         ];
-        $this->view('api/dishes', $data);
+        $this->view('api/display_json', $data);
     }
 
     public function getDish($id)
     {
         $dish = $this->apiModel->findDishById($id);
 
-
         $data = [
-            'dish' => $dish
+            'json' => $dish
         ];
 
-        $this->view('api/getdish', $data);
+        $this->view('api/display_json', $data);
+    }
+
+    public function getRecommendations($amount)
+    {
+        $user_id = $_GET["user_id"];
+        $dishes = $this->apiModel->getRecommendations($amount, $user_id);
+
+        $data = [
+            'dishes' => $dishes
+        ];
+
+        $this->view('api/display_json', $data);
     }
 }
