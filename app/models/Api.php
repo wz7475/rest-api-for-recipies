@@ -44,12 +44,9 @@ class Api
         $this->db->bind(':id', $id);
 
         $result = $this->db->single();
-        if($result == false)
-        {
+        if ($result == false) {
             return "No recipie";
-        }
-        else
-        {
+        } else {
             return $result->steps;
         }
     }
@@ -60,10 +57,40 @@ class Api
         return  $this->fillDishWithData($result);
     }
 
+    public function getUsedDishes($user_id)
+    {
+        $this->db->query('SELECT dish_id FROM used WHERE user_id = :user_id');
+        $this->db->bind(":user_id", $user_id);
+        $used_raw = $this->db->resultSet();
+        $output = [];
+        foreach ($used_raw as $used) {
+            array_push($output, $used->dish_id);
+        }
+
+        return $output;
+    }
+
     public function addDishToUsed($dish_id, $user_id)
     {
+        //sprawdzam czy duplikat (nie wiem jak inaczej xddddd)
+        $this->db->query('SELECT count(*) as n FROM used WHERE dish_id = :dish_id and user_id = :user_id LIMIT 1');
+        $this->db->bind(":dish_id", $dish_id);
+        $this->db->bind(":user_id", $user_id);
+        if ($this->db->single()->n > 0) {
+            die("Dish is already noted as used");
+        }
         $this->db->query('INSERT INTO used (dish_id, user_id) VALUES (:dish_id, :user_id)');
-        return $this->db->execute();
+        $this->db->bind(":dish_id", $dish_id);
+        $this->db->bind(":user_id", $user_id);
+        $this->db->execute();
+    }
+
+    public function removeDishFromUsed($dish_id, $user_id)  
+    {
+        $this->db->query("DELETE FROM `used` WHERE dish_id = :dish_id and user_id = :user_id");
+        $this->db->bind("dish_id", $dish_id);
+        $this->db->bind("user_id", $user_id);
+        $this->db->execute();
     }
 
     public function getRankedTags($user_id)
@@ -231,8 +258,7 @@ class Api
         $tag_names = [];
         foreach ($tags as $tag_id) {
             $tag = $this->findTagByID($tag_id);
-            if($tag == false)
-            {
+            if ($tag == false) {
                 continue;
             }
             $tag_name = $tag->name;
