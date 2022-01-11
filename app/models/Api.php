@@ -51,9 +51,9 @@ class Api
         }
     }
 
-    public function findDishByID($recipie_id) //returns a dish with all data in place
+    public function findDishByID($dish_id) //returns a dish with all data in place
     {
-        $result = $this->findDishByIDRaw($recipie_id);
+        $result = $this->findDishByIDRaw($dish_id);
         return  $this->fillDishWithData($result);
     }
 
@@ -279,5 +279,32 @@ class Api
         $dish->recipie = utf8_encode($recipie);
 
         return $dish;
+    }
+
+    public function getESPRecipie($user_id) //returns the dish the user wants to be displayed
+    {
+        $this->db->query('SELECT dish_id FROM esp_display WHERE user_id = :user_id');
+        $this->db->bind(':user_id', $user_id);
+        $dish_id = $this->db->single()->dish_id;
+        $recipie = $this->findDishByID($dish_id);
+        return $recipie;
+    }
+
+    public function setESPRecipie($user_id, $dish_id)
+    {
+        //check if the user already has a recipie set
+        $this->db->query('SELECT * FROM esp_display WHERE user_id = :user_id');
+        $this->db->bind(':user_id', $user_id);
+        if(!$this->db->single())
+        {
+            $this->db->query('INSERT INTO esp_display (user_id, dish_id) VALUES (:user_id, :dish_id)');
+        }
+        else
+        {
+            $this->db->query('UPDATE esp_display SET dish_id=:dish_id WHERE user_id=:user_id');
+        }
+        $this->db->bind(':user_id', $user_id);
+        $this->db->bind(':dish_id', $dish_id);
+        $this->db->execute();
     }
 }

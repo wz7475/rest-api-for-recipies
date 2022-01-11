@@ -39,6 +39,7 @@ class Apis extends Controller
         $this->view('api/display_json', $data);
     }
 
+    //All things about "used"
     public function getUsed($user_id)
     {
         $used_ids = $this->apiModel->getUsedDishes($user_id);
@@ -64,5 +65,25 @@ class Apis extends Controller
         $dish_id = $_POST["dish_id"];
 
         $this->apiModel->removeDishFromUsed($dish_id, $user_id);
+    }
+
+    //Access to the Dish'es recipie the user wants to display
+    public function getESPRecipie($user_id)
+    {
+        $recipie = $this->apiModel->getESPRecipie($user_id);
+
+        $data = [
+            'json' => $recipie
+        ];
+
+        $this->view('api/display_json', $data);
+    }
+
+    public function setESPRecipie()
+    {
+        $dish_id = $_GET["dish_id"];
+        $user_id = $_GET["user_id"];
+
+        $this->apiModel->setESPRecipie($user_id, $dish_id);
     }
 }
