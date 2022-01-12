@@ -86,7 +86,7 @@ class Api
         $this->db->execute();
     }
 
-    public function removeDishFromUsed($dish_id, $user_id)  
+    public function removeDishFromUsed($dish_id, $user_id)
     {
         $this->db->query("DELETE FROM `used` WHERE dish_id = :dish_id and user_id = :user_id");
         $this->db->bind("dish_id", $dish_id);
@@ -98,7 +98,7 @@ class Api
     {
         $raw = $this->brain->getRecommendedRaw($user_id, $amount);
         $out = array();
-        foreach($raw as $dish) {
+        foreach ($raw as $dish) {
             array_push($out, $this->fillDishWithData($dish));
         }
         return $out;
@@ -142,6 +142,7 @@ class Api
         return $dish;
     }
 
+    // all things ESP recipie display
     public function getESPRecipie($user_id) //returns the dish the user wants to be displayed
     {
         $this->db->query('SELECT dish_id FROM esp_display WHERE user_id = :user_id');
@@ -156,16 +157,45 @@ class Api
         //check if the user already has a recipie set
         $this->db->query('SELECT * FROM esp_display WHERE user_id = :user_id');
         $this->db->bind(':user_id', $user_id);
-        if(!$this->db->single())
-        {
+        if (!$this->db->single()) {
             $this->db->query('INSERT INTO esp_display (user_id, dish_id) VALUES (:user_id, :dish_id)');
-        }
-        else
-        {
+        } else {
             $this->db->query('UPDATE esp_display SET dish_id=:dish_id WHERE user_id=:user_id');
         }
         $this->db->bind(':user_id', $user_id);
         $this->db->bind(':dish_id', $dish_id);
+        $this->db->execute();
+    }
+
+    //all about opinions
+    public function getUserOpinions($user_id) //returns an array of all opinons held by the user
+    {
+        $this->db->query('SELECT tag_id, opinion_coef FROM opinions WHERE user_id = :user_id');
+        $this->db->bind(':user_id', $user_id);
+        return $this->db->resultSet();
+    }
+
+    public function getUserTagOpinion($user_id, $tag_id) //returns the opinion_coef a user holds about the tag of tag_id id
+    {
+        $this->db->query('SELECT opinion_coef FROM opinions WHERE user_id = :user_id and tag_id = :tag_id');
+        $this->db->bind(':user_id', $user_id);
+        $this->db->bind(':tag_id', $tag_id);
+        return $this->db->single()->opinion_coef;
+    }
+
+    public function setOpinion($user_id, $tag_id, $opinion_coef) //sets users opinon about the tag with tag_id id
+    {
+        $this->db->query('SELECT * FROM opinions WHERE user_id = :user_id and tag_id=:tag_id');
+        $this->db->bind(':user_id', $user_id);
+        $this->db->bind(':tag_id', $tag_id);
+        if (!$this->db->single()) {
+            $this->db->query('INSERT INTO opinions (user_id, tag_id, opinion_coef) VALUES (:user_id, :tag_id, :opinion_coef)');
+        } else {
+            $this->db->query('UPDATE opinions SET opinion_coef=:opinion_coef WHERE user_id=:user_id and tag_id=:tag_id');
+        }
+        $this->db->bind(':user_id', $user_id);
+        $this->db->bind(':tag_id', $tag_id);
+        $this->db->bind(':opinion_coef', $opinion_coef);
         $this->db->execute();
     }
 }

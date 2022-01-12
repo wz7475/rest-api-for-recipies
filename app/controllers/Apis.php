@@ -5,6 +5,7 @@ class Apis extends Controller
     {
         $this->apiModel = $this->model('Api');
     }
+
     public function dishes()
     {
         $dishes = $this->apiModel->findAlldishes();
@@ -50,7 +51,7 @@ class Apis extends Controller
 
         $this->view('api/display_json', $data);
     }
-    
+
     public function addToUsed()
     {
         $user_id = $_POST["user_id"];
@@ -85,5 +86,40 @@ class Apis extends Controller
         $user_id = $_GET["user_id"];
 
         $this->apiModel->setESPRecipie($user_id, $dish_id);
+    }
+
+    //All things about opinions
+    public function setOpinion()
+    {
+        $tag_id = $_GET["tag_id"];
+        $user_id = $_GET["user_id"];
+        $opinion_coef = $_GET["opinion_coef"];
+
+        $this->apiModel->setOpinion($user_id, $tag_id, $opinion_coef);
+    }
+
+    public function getUserOpinions($user_id)
+    {
+        $opinions = $this->apiModel->getUserOpinions($user_id);
+        
+        $data = [
+            "json" => $opinions 
+        ];
+
+        $this->view('api/display_json', $data);
+    }
+
+    public function getUserTagOpinion()
+    {
+        $tag_id = $_GET["tag_id"];
+        $user_id = $_GET["user_id"];
+
+        $opinions = $this->apiModel->getUserTagOpinion($user_id, $tag_id);
+        
+        $data = [
+            "json" => $opinions 
+        ];
+
+        $this->view('api/display_json', $data);
     }
 }
