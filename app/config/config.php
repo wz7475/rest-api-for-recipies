@@ -11,6 +11,15 @@ if(APPROOT == "D:\Programming\gr9k\granny-grud\app")
 
     define('URLROOT', 'http://localhost/');
 }
+else if(strcmp(APPROOT, "C:\xampp\htdocs\mvcblog2\app"))
+{
+    define('DB_HOST', 'eu-cdbr-west-02.cleardb.net'); //Add your db host
+    define('DB_USER', 'bf6d0ebec5a2f9'); // Add your DB root
+    define('DB_PASS', '1c957d41'); //Add your DB pass
+    define('DB_NAME', 'heroku_5c1b88cec025cd7'); //Add your DB Name
+
+    define('URLROOT', 'http://localhost/');
+}
 else
 {
     $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
