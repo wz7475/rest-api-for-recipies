@@ -50,10 +50,11 @@ class Apis extends Controller
         $this->view('api/display_json', $data);
     }
 
-    //Access to the Dish'es recipie the user wants to display
-    public function getESPRecipie($user_id)
+    //All things about "used"
+    public function getUsed()
     {
-        $recipie = $this->apiModel->getESPRecipie($user_id);
+        $user_id = 1;
+        $used_ids = $this->apiModel->getUsedDishes($user_id);
 
         $data = [
             'json' => $recipie
@@ -65,8 +66,9 @@ class Apis extends Controller
     
     public function setESPRecipie()
     {
-        $dish_id = $_GET["dish_id"];
-        $user_id = $_GET["user_id"];
+        $user_id = 1;
+        // $user_id = $_POST["user_id"];
+        $dish_id = $_POST["dish_id"];
 
         $this->apiModel->setESPRecipie($user_id, $dish_id);
     }
@@ -102,17 +104,6 @@ class Apis extends Controller
         return $this->apiModel->addTag($name);
     }
 
-    //All things about "used"
-    public function getUsed($user_id)
-    {
-        $used_ids = $this->apiModel->getUsedDishes($user_id);
-
-        $data = [
-            'json' => $used_ids
-        ];
-
-        $this->view('api/display_json', $data);
-    }
 
     public function addToUsed()
     {
@@ -134,14 +125,16 @@ class Apis extends Controller
     public function setOpinion()
     {
         $tag_id = $_GET["tag_id"];
-        $user_id = $_GET["user_id"];
+        // $user_id = $_GET["user_id"];
+        $user_id = 1;
         $opinion_coef = $_GET["opinion_coef"];
 
         $this->apiModel->setOpinion($user_id, $tag_id, $opinion_coef);
     }
 
-    public function getUserOpinions($user_id)
+    public function getUserOpinions()
     {
+        $user_id = 1;
         $opinions = $this->apiModel->getUserOpinions($user_id);
         
         $data = [
@@ -154,7 +147,8 @@ class Apis extends Controller
     public function getUserTagOpinion()
     {
         $tag_id = $_GET["tag_id"];
-        $user_id = $_GET["user_id"];
+        // $user_id = $_GET["user_id"];
+        $user_id = 1;
 
         $opinions = $this->apiModel->getUserTagOpinion($user_id, $tag_id);
         
