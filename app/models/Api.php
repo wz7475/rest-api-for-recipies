@@ -110,7 +110,19 @@ class Api
 
         $this->db->bind(':id', $tag_id);
 
-        return  $this->db->single();
+        return  $this->db->single()->name;
+    }
+
+    public function findAllTags() //returns tag's name by its id
+    {
+        $this->db->query('SELECT * FROM tags');
+        $results = $this->db->resultSet();
+        $data = [];
+        foreach ($results as $row) {
+            $data[$row->id] = $row->name;
+        }
+
+        return  $data;
     }
 
     public function getTags($tag_id_string) //converts tags_id into an array of tag names
