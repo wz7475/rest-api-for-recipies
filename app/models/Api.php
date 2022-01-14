@@ -110,7 +110,7 @@ class Api
 
         $this->db->bind(':id', $tag_id);
 
-        return  $this->db->single()->name;
+        return  $this->db->single();
     }
 
     public function findAllTags() //returns tag's name by its id

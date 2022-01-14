@@ -75,7 +75,7 @@ class Apis extends Controller
 
     public function gettag($id)
     {
-        $recipie = $this->apiModel->findTagByID($id);
+        $recipie = $this->apiModel->findTagByID($id)->name;
 
         $data = [
             'json' => $recipie
