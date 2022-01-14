@@ -140,6 +140,18 @@ class Api
         return $tag_names;
     }
 
+    public function addTag($tagname) {
+        $this->db->query('INSERT INTO tags(name) VALUES(:name)');
+
+        $this->db->bind(':name', $tagname);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function fillDishWithData($dish) //puts recipie and tags into the recipie and returns it
     {
         //Adding tags from tag ids

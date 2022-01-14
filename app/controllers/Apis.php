@@ -84,6 +84,15 @@ class Apis extends Controller
         $this->view('api/display_json', $data);
     }
 
+    public function addTag()
+    {
+        if (!(isset($_POST['tagname']))){
+            return false;
+        }
+        $name = $_POST['tagname'];
+        return $this->apiModel->addTag($name);
+    }
+
     //All things about "used"
     public function _getUsed($user_id)
     {
