@@ -29,6 +29,28 @@ class Api
         return $output;
     }
 
+    public function dishesWithTagRaw($tag_id) //returns all dishes with their data in place
+    {
+        $this->db->query('SELECT * FROM dishes WHERE ');
+
+        $results = $this->db->resultSet();
+
+        return $results;
+    }
+
+    public function dishesWithTag($tag_id) //returns all dishes with their data in place
+    {
+        $all_dishes = $this->findAlldishesRaw();
+        $output = [];
+        foreach ($all_dishes as $dish) {
+            if (strpos($dish->tags_id, $tag_id) !== false) {
+                array_push($output, $dish);
+            }
+        }
+
+        return $output;
+    }
+
     public function findDishByIDRaw($id) //returns a raw dish from the database
     {
         $this->db->query('SELECT * FROM dishes WHERE id = :id');

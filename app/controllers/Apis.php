@@ -26,6 +26,15 @@ class Apis extends Controller
         $this->view('api/display_json', $data);
     }
 
+    public function disheswithtag($tag_id)
+    {
+        $dishes = $this->apiModel->dishesWithTag($tag_id);
+        $data = [
+            'json' => $dishes
+        ];
+        $this->view('api/display_json', $data);
+    }
+
     public function getRecommendations()
     {
 
