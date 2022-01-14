@@ -28,10 +28,19 @@ class Apis extends Controller
 
     public function getRecommendations()
     {
-        $user_id = $_GET["user_id"];
-        $amount = $_GET["amount"];
-
-        $dishes = $this->apiModel->getRecommendations($amount, $user_id);
+        // $user_id = $_GET["user_id"];
+        $user_id = 1;
+        if(isset($_GET["amount"]))
+        {
+            $amount = $_GET["amount"];
+        }
+        else
+        {
+            $amount = 1;
+        }
+        
+        $special_tag = $_GET["special_tag"];
+        $dishes = $this->apiModel->getRecommendations($amount, $user_id, $special_tag);
 
         $data = [
             'json' => $dishes

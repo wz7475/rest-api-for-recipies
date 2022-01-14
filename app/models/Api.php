@@ -94,9 +94,9 @@ class Api
         $this->db->execute();
     }
 
-    public function getRecommendations($user_id, $amount)
+    public function getRecommendations($user_id, $amount, $special_tag)
     {
-        $raw = $this->brain->getRecommendedRaw($user_id, $amount);
+        $raw = $this->brain->getRecommendedRaw($user_id, $amount, $special_tag);
         $out = array();
         foreach ($raw as $dish) {
             array_push($out, $this->fillDishWithData($dish));

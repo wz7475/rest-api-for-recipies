@@ -12,15 +12,15 @@
             */
     
             //Get all disliked tags
-            $this->db->query('
-            SELECT tags_id FROM dishes
-            WHERE id in (
-                SELECT dish_id FROM dislikes
-                WHERE user_id = :user_id
-                )
-            ');
-            $this->db->bind(':user_id', $user_id);
-            $disliked_tags = $this->db->resultSet();
+            // $this->db->query('
+            // SELECT tags_id FROM dishes
+            // WHERE id in (
+            //     SELECT dish_id FROM dislikes
+            //     WHERE user_id = :user_id
+            //     )
+            // ');
+            // $this->db->bind(':user_id', $user_id);
+            // $disliked_tags = $this->db->resultSet();
     
             //Get all used tags (ergo liked tags)
             $this->db->query('
@@ -34,17 +34,17 @@
             $used_tags = $this->db->resultSet();
     
             //count them
-            $bucket_disliked = [];
-            foreach ($disliked_tags as $tags) {
-                $tags = explode(",", $tags->tags_id);
-                foreach ($tags as $tag) {
-                    if (isset($bucket_disliked[$tag])) {
-                        $bucket_disliked[$tag]++;
-                    } else {
-                        $bucket_disliked[$tag] = 1;
-                    }
-                }
-            }
+            // $bucket_disliked = [];
+            // foreach ($disliked_tags as $tags) {
+            //     $tags = explode(",", $tags->tags_id);
+            //     foreach ($tags as $tag) {
+            //         if (isset($bucket_disliked[$tag])) {
+            //             $bucket_disliked[$tag]++;
+            //         } else {
+            //             $bucket_disliked[$tag] = 1;
+            //         }
+            //     }
+            // }
             $bucket_used = [];
             foreach ($used_tags as $tags) {
                 $tags = explode(",", $tags->tags_id);
@@ -58,13 +58,13 @@
             }
     
             //normalize
-            if (count($bucket_disliked)) $worst_tag_occurences = max($bucket_disliked);
+            // if (count($bucket_disliked)) $worst_tag_occurences = max($bucket_disliked);
             if (count($bucket_used)) $best_tag_occurences = max($bucket_used);
             $ranked_tags = [];
     
-            foreach (array_keys($bucket_disliked) as $tag) {
-                $ranked_tags[$tag] = - ($bucket_disliked[$tag] / $worst_tag_occurences);
-            }
+            // foreach (array_keys($bucket_disliked) as $tag) {
+            //     $ranked_tags[$tag] = - ($bucket_disliked[$tag] / $worst_tag_occurences);
+            // }
     
             foreach (array_keys($bucket_used) as $tag) {
                 if (isset($ranked_tags[$tag])) {
@@ -92,17 +92,15 @@
             return $rank_by_usage;
         }
 
-        public function getRecommendedRaw($amount, $user_id)
+        public function getRecommendedRaw($amount, $user_id, $special_tag)
         {
-            //get all recipies that are not disliked
+            //get all recipies that have the specified tag (are in the specified category)
             $this->db->query('
             SELECT * FROM dishes
-            WHERE id not in (
-                SELECT dish_id FROM dislikes 
-                WHERE user_id = :user_id
-                )
+            WHERE tags_id like ":the_tag,%" or tags_id like "%,:the_tag,%" or tags_id like "%,:the_tag"
             ');
             $this->db->bind(':user_id', $user_id);
+            $this->db->bind(':the_tag', $special_tag);
             $available_dishes = $this->db->resultSet();
 
             $rank_by_usage = $this->getUsageRank($user_id);
