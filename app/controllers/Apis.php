@@ -103,7 +103,7 @@ class Apis extends Controller
     }
 
     //All things about "used"
-    public function _getUsed($user_id)
+    public function getUsed($user_id)
     {
         $used_ids = $this->apiModel->getUsedDishes($user_id);
 
@@ -114,7 +114,7 @@ class Apis extends Controller
         $this->view('api/display_json', $data);
     }
 
-    public function _addToUsed()
+    public function addToUsed()
     {
         $user_id = $_POST["user_id"];
         $dish_id = $_POST["dish_id"];
@@ -122,7 +122,7 @@ class Apis extends Controller
         $this->apiModel->addDishToUsed($dish_id, $user_id);
     }
 
-    public function _removeFromUsed()
+    public function removeFromUsed()
     {
         $user_id = $_POST["user_id"];
         $dish_id = $_POST["dish_id"];
@@ -131,7 +131,7 @@ class Apis extends Controller
     }
 
     //All things about opinions
-    public function _setOpinion()
+    public function setOpinion()
     {
         $tag_id = $_GET["tag_id"];
         $user_id = $_GET["user_id"];
@@ -140,7 +140,7 @@ class Apis extends Controller
         $this->apiModel->setOpinion($user_id, $tag_id, $opinion_coef);
     }
 
-    public function _getUserOpinions($user_id)
+    public function getUserOpinions($user_id)
     {
         $opinions = $this->apiModel->getUserOpinions($user_id);
         
@@ -151,7 +151,7 @@ class Apis extends Controller
         $this->view('api/display_json', $data);
     }
 
-    public function _getUserTagOpinion()
+    public function getUserTagOpinion()
     {
         $tag_id = $_GET["tag_id"];
         $user_id = $_GET["user_id"];
