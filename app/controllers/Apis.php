@@ -1,4 +1,5 @@
 <?php
+// session_start();
 class Apis extends Controller
 {
     public function __construct()
@@ -35,17 +36,37 @@ class Apis extends Controller
         $this->view('api/display_json', $data);
     }
 
-    public function getRecommendations()
+    public function getRecommendations($tag_id)
     {
 
-        // $dishes = $this->apiModel->getRecommendations($amount, $user_id);
-        /* for recommendation alogoritm development 
+        // $recommedned_dish = $this->apiModel->getRecommendations($tag_id);
+        /* for recommendation alogoritm development
         alway return fixed recipe */
-        $dish = $this->getDish(1);
+        $recommedned_dish = $this->apiModel->findDishByID(1);
 
         $data = [
-            'json' => $dish
+            'json' => $recommedned_dish
         ];
+
+
+        if (!file_exists(APPROOT . '/cache')) {
+            mkdir(APPROOT . '/cache', 0777, true);
+        }
+
+        File_put_contents(APPROOT . '/cache' . "/recommendation.json", json_encode($data));
+    }
+
+    public function getESPRecipie()
+    {
+        if (!(file_exists(APPROOT . '/cache' . "/recommendation.json"))) {
+            $data["json"] = [
+                "recipie" => "Choose recomendation from mobile app first!"
+            ];
+        } else {
+            $data["json"] = [
+                "recipie" => file_get_contents(APPROOT . '/cache' . "/recommendation.json")
+            ];
+        }
 
         $this->view('api/display_json', $data);
     }
@@ -61,16 +82,6 @@ class Apis extends Controller
         ];
 
         $this->view('api/display_json', $data);
-    }
-
-    
-    public function setESPRecipie()
-    {
-        $user_id = 1;
-        // $user_id = $_POST["user_id"];
-        $dish_id = $_POST["dish_id"];
-
-        $this->apiModel->setESPRecipie($user_id, $dish_id);
     }
 
     public function tags()
@@ -97,7 +108,7 @@ class Apis extends Controller
 
     public function addTag()
     {
-        if (!(isset($_POST['tagname']))){
+        if (!(isset($_POST['tagname']))) {
             return false;
         }
         $name = $_POST['tagname'];

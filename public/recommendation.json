@@ -1,0 +1,15 @@
+{
+    "json": {
+        "id": "1",
+        "name": "Kamienianka z mlekiem",
+        "description": "Pryszna zupa z delikatnie podgrzanych kamieni zalewanych mlekiem",
+        "image": null,
+        "tags": [
+            "Vege",
+            "Quick to make",
+            "Eco",
+            "Low calorie"
+        ],
+        "recipie": "1. Kamienie wy\u00c5\u0082\u00c3\u00b3\u00c5\u00bc na tack\u00c4\u0099 do pieczenia\r\n2. W\u00c5\u0082\u00c3\u00b3\u00c5\u00bc do piekarnika rozgrzanego do 15000 C na 20 minut\r\n3. Wsyp do miski i zalej mlekiem\r\n\r\nBon apetit!"
+    }
+}
