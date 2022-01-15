@@ -93,7 +93,7 @@
             foreach ($used_dishes as $dish) {
                 $dish_id = $dish->dish_id;
                 $delta_t = $dish->delta_t;
-                $rank_by_usage[$dish_id] = tanh($delta_t*$SQUISH/$BASE_TIME_UNIT-$OFFSET)/2+0.5;
+                $rank_by_usage[$dish_id] = tanh($delta_t*$SQUISH/$BASE_TIME_UNIT-$OFFSET)/2-0.5;
             }
             return $rank_by_usage;
         }
