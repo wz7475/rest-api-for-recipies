@@ -38,11 +38,17 @@ class Apis extends Controller
 
     public function getRecommendations($tag_id)
     {
-
-        // $recommedned_dish = $this->apiModel->getRecommendations($tag_id);
-        /* for recommendation alogoritm development
-        alway return fixed recipe */
-        $recommedned_dish = $this->apiModel->findDishByID(1);
+        $user_id = 1;
+        if(isset($_GET["amount"]))
+        {
+            $amount = $_GET["amount"];
+        }
+        else
+        {
+            $amount = 1;
+        }
+        
+        $recommedned_dish = $this->apiModel->getRecommendations($amount, $user_id, $tag_id);
 
         $data = [
             'json' => $recommedned_dish
@@ -54,6 +60,7 @@ class Apis extends Controller
         }
 
         File_put_contents(APPROOT . '/cache' . "/recommendation.json", json_encode($data));
+        $this->view('api/display_json', $data);
     }
 
     public function getESPRecipie()
@@ -118,8 +125,8 @@ class Apis extends Controller
 
     public function addToUsed()
     {
-        $user_id = $_GET["user_id"];
-        $dish_id = $_GET["dish_id"];
+        $user_id = $_POST["user_id"];
+        $dish_id = $_POST["dish_id"];
 
         if(isset($user_id) and isset($dish_id))
         {

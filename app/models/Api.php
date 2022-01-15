@@ -101,7 +101,7 @@ class Api
         $this->db->bind(":user_id", $user_id);
 
         if ($this->db->single()->n > 0) {
-            $this->db->query('UPDATE esp_display SET time_stamp=:time_stamp WHERE user_id=:user_id and dish_id=:dish_id');
+            $this->db->query('UPDATE used SET time_stamp=:time_stamp WHERE user_id=:user_id and dish_id=:dish_id');
         } else {
             $this->db->query('INSERT INTO used (dish_id, user_id, time_stamp) VALUES (:dish_id, :user_id, :time_stamp)');
         }
