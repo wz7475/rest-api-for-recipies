@@ -78,7 +78,7 @@ class Apis extends Controller
         $used_ids = $this->apiModel->getUsedDishes($user_id);
 
         $data = [
-            'json' => $recipie
+            'json' => $used_ids
         ];
 
         $this->view('api/display_json', $data);
@@ -118,10 +118,17 @@ class Apis extends Controller
 
     public function addToUsed()
     {
-        $user_id = $_POST["user_id"];
-        $dish_id = $_POST["dish_id"];
+        $user_id = $_GET["user_id"];
+        $dish_id = $_GET["dish_id"];
 
-        $this->apiModel->addDishToUsed($dish_id, $user_id);
+        if(isset($user_id) and isset($dish_id))
+        {
+            $this->apiModel->addDishToUsed($dish_id, $user_id);
+        }
+        else
+        {
+            die("Missing arguments");
+        }
     }
 
     public function removeFromUsed()
