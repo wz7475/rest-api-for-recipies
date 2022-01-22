@@ -99,12 +99,16 @@ class Api
         $this->db->query('SELECT count(*) as n FROM used WHERE dish_id = :dish_id and user_id = :user_id LIMIT 1');
         $this->db->bind(":dish_id", $dish_id);
         $this->db->bind(":user_id", $user_id);
+
         if ($this->db->single()->n > 0) {
-            die("Dish is already noted as used");
+            $this->db->query('UPDATE used SET time_stamp=:time_stamp WHERE user_id=:user_id and dish_id=:dish_id');
+        } else {
+            $this->db->query('INSERT INTO used (dish_id, user_id, time_stamp) VALUES (:dish_id, :user_id, :time_stamp)');
         }
-        $this->db->query('INSERT INTO used (dish_id, user_id) VALUES (:dish_id, :user_id)');
         $this->db->bind(":dish_id", $dish_id);
         $this->db->bind(":user_id", $user_id);
+        $this->db->bind(":time_stamp", time());
+
         $this->db->execute();
     }
 
@@ -162,7 +166,8 @@ class Api
         return $tag_names;
     }
 
-    public function addTag($tagname) {
+    public function addTag($tagname)
+    {
         $this->db->query('INSERT INTO tags(name) VALUES(:name)');
 
         $this->db->bind(':name', $tagname);

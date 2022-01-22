@@ -75,19 +75,25 @@
             return $ranked_tags;
         }
     
-        public function getUsageRank($user_id)
+        public function getTemporalRank($user_id)
         {
             $this->db->query('
-            SELECT dish_id FROM used 
+            SELECT dish_id, :now-time_stamp as delta_t FROM used 
             WHERE user_id = :user_id
             ');
             $this->db->bind(':user_id', $user_id);
+            $this->db->bind(':now', time());
+
             $used_dishes = $this->db->resultSet();
-    
+            $BASE_TIME_UNIT = (3600*24*7);
+            $SQUISH = 4;
+            $OFFSET = 2;
+
             $rank_by_usage = [];
             foreach ($used_dishes as $dish) {
-                //PÓŹNIEJ BĘDZIE TO FUNKCJA OD CZASU
-                $rank_by_usage[$dish->dish_id] = -1;
+                $dish_id = $dish->dish_id;
+                $delta_t = $dish->delta_t;
+                $rank_by_usage[$dish_id] = tanh($delta_t*$SQUISH/$BASE_TIME_UNIT-$OFFSET)/2-0.5;
             }
             return $rank_by_usage;
         }
@@ -97,13 +103,11 @@
             //get all recipies that have the specified tag (are in the specified category)
             $this->db->query('
             SELECT * FROM dishes
-            WHERE tags_id like ":the_tag,%" or tags_id like "%,:the_tag,%" or tags_id like "%,:the_tag"
+            WHERE tags_id like "'.$special_tag.',%" or tags_id like "%,'.$special_tag.',%" or tags_id like "%,'.$special_tag.'"
             ');
-            $this->db->bind(':user_id', $user_id);
-            $this->db->bind(':the_tag', $special_tag);
             $available_dishes = $this->db->resultSet();
 
-            $rank_by_usage = $this->getUsageRank($user_id);
+            $rank_by_usage = $this->getTemporalRank($user_id);
             $ranked_tags = $this->getRankedTags($user_id);
 
             //calculate each dishes score
