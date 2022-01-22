@@ -244,4 +244,40 @@ class Api
         $this->db->bind(':opinion_coef', $opinion_coef);
         $this->db->execute();
     }
+
+    public function findRecipieBySteps($steps){
+        $this->db->query('SELECT * FROM recipies WHERE steps = :steps');
+
+        $this->db->bind(':steps', $steps);
+
+        return  $this->db->single();
+    }
+
+    public function addDishObject($data)
+    {
+       $this->db->query('INSERT INTO dishes (name, description, image, recipie_id, tags_id) VALUES(:name, :description, :image, :recipie_id, :tags_id)');
+
+        
+
+        $this->db->bind(':name', $data['name']);
+        $this->db->bind(':description', $data['description']);
+        $this->db->bind(':image', $data['image']);
+        $this->db->bind(':recipie_id', $data["recipie_id"]);
+        $this->db->bind(':tags_id', $data['tags_id']);
+
+        if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function add_recipie($data)
+    {
+        $this->db->query('INSERT INTO recipies (steps) VALUES (:steps)');
+
+        $this->db->bind(':steps', $data['recipie']);
+
+        $this->db->execute();
+    }
 }

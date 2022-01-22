@@ -84,6 +84,22 @@ class Apis extends Controller
         $this->view('api/display_json', $data);
     }
 
+    public function add_dish_object()
+    {
+        $data = [];
+        $data["name"]  = $_POST["name"];
+        $data["description"] =  $_POST["description"];
+        $data["image"] =  $_POST["image"];
+        $data["tags_id"]  = $_POST["tags_id"];
+        $data["recipie"]  = $_POST["recipie"];
+
+        $this->apiModel->add_recipie($data);
+
+        $recipie_id = $this->apiModel->findRecipieBySteps($data["recipie"])->id;
+        $data["recipie_id"]  = $recipie_id;
+        $this->apiModel->addDishObject($data);
+    }
+
     public function tags()
     {
         $recipie = $this->apiModel->findAllTags();
