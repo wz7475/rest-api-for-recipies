@@ -1,7 +1,8 @@
 <?php
     class Brain {
-        public function __construct($db) {
-            $this->db = $db;
+        public function __construct($model) {
+            $this->db = $model->db;
+            $this->apiModel = $model;
         }
 
         public function getRankedTags($user_id)
@@ -101,11 +102,12 @@
         public function getRecommendedRaw($amount, $user_id, $special_tag)
         {
             //get all recipies that have the specified tag (are in the specified category)
-            $this->db->query('
-            SELECT * FROM dishes
-            WHERE tags_id like "'.$special_tag.',%" or tags_id like "%,'.$special_tag.',%" or tags_id like "%,'.$special_tag.'"
-            ');
-            $available_dishes = $this->db->resultSet();
+            // $this->db->query('
+            // SELECT * FROM dishes
+            // WHERE tags_id like "'.$special_tag.',%" or tags_id like "%,'.$special_tag.',%" or tags_id like "%,'.$special_tag.'"
+            // ');
+            // $available_dishes = $this->db->resultSet();
+            $available_dishes = $this->apiModel->dishesWithTag($special_tag);
 
             $rank_by_usage = $this->getTemporalRank($user_id);
             $ranked_tags = $this->getRankedTags($user_id);

@@ -1,12 +1,12 @@
 <?php
 class Api
 {
-    private $db;
+    public $db;
 
     public function __construct()
     {
         $this->db = new Database;
-        $this->brain = new Brain($this->db);
+        $this->brain = new Brain($this);
     }
 
     public function findAlldishesRaw()  //returns raw dish database 
