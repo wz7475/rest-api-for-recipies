@@ -43,7 +43,7 @@ class Api
         $all_dishes = $this->findAlldishesRaw();
         $output = [];
         foreach ($all_dishes as $dish) {
-            if (strpos($dish->tags_id, $tag_id) !== false) {
+            if (strpos($dish->tags_id . ",", $tag_id . ",") !== false) {
                 array_push($output, $dish);
             }
         }
