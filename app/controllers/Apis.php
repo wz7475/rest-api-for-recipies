@@ -39,14 +39,7 @@ class Apis extends Controller
     public function getRecommendations($tag_id)
     {
         $user_id = 1;
-        if(isset($_GET["amount"]))
-        {
-            $amount = $_GET["amount"];
-        }
-        else
-        {
-            $amount = 1;
-        }
+        $amount = 1;
         
         $recommedned_dish = $this->apiModel->getRecommendations($amount, $user_id, $tag_id);
 

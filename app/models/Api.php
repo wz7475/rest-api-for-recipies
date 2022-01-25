@@ -127,6 +127,11 @@ class Api
         foreach ($raw as $dish) {
             array_push($out, $this->fillDishWithData($dish));
         }
+        if(isset($raw[0]))
+        {
+            $used_id = $raw[0]->id;
+            $this->addDishToUsed($used_id, 1);
+        }
         return $out;
     }
 
