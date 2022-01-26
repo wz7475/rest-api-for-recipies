@@ -44,7 +44,7 @@ class Api
         $output = [];
         foreach ($all_dishes as $dish) {
             if (strpos($dish->tags_id . ",", $tag_id . ",") !== false) {
-                array_push($output, $dish);
+                array_push($output, $this->fillDishWithData($dish));
             }
         }
 
