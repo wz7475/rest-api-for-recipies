@@ -107,7 +107,7 @@
             // WHERE tags_id like "'.$special_tag.',%" or tags_id like "%,'.$special_tag.',%" or tags_id like "%,'.$special_tag.'"
             // ');
             // $available_dishes = $this->db->resultSet();
-            $available_dishes = $this->apiModel->dishesWithTag($special_tag);
+            $available_dishes = $this->apiModel->dishesWithTagRaw($special_tag);
 
             $rank_by_usage = $this->getTemporalRank($user_id);
             $ranked_tags = $this->getRankedTags($user_id);

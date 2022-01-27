@@ -31,11 +31,15 @@ class Api
 
     public function dishesWithTagRaw($tag_id) //returns all dishes with their data in place
     {
-        $this->db->query('SELECT * FROM dishes WHERE ');
+        $all_dishes = $this->findAlldishesRaw();
+        $output = [];
+        foreach ($all_dishes as $dish) {
+            if (strpos($dish->tags_id . ",", $tag_id . ",") !== false) {
+                array_push($output, $dish);
+            }
+        }
 
-        $results = $this->db->resultSet();
-
-        return $results;
+        return $output;
     }
 
     public function dishesWithTag($tag_id) //returns all dishes with their data in place
